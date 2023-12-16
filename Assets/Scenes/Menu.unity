@@ -714,8 +714,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1372213169}
-        m_TargetAssemblyTypeName: UnityEngine.Object, UnityEngine
-        m_MethodName: set_name
+        m_TargetAssemblyTypeName: MovingBeetweenScenes, Assembly-CSharp
+        m_MethodName: LoadScene
         m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -792,7 +792,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a080b48f6981a645925432f2c037892, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  name_scene: 
 --- !u!4 &1372213170
 Transform:
   m_ObjectHideFlags: 0
