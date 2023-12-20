@@ -42,14 +42,15 @@ public class Tuner : MonoBehaviour
 
         string microphoneName =  Microphone.devices[0];
         source.outputAudioMixerGroup = MicrophoneGroup;
-        source.clip = Microphone.Start(microphoneName, true, 20, sampleRate);
-        source.Play();
+        // source.clip = Microphone.Start(microphoneName, true, 20, sampleRate);
+        // source.Play();
         
         spectrum = new float[SAMPLE_SIZE];        
     }
 
     public void OnRecords()
     {   
+        Microphone.End(microphoneName);
         source.clip = Microphone.Start(microphoneName, true, 20, sampleRate);
         source.Play();      
     }
@@ -57,23 +58,13 @@ public class Tuner : MonoBehaviour
     public void OffRecords()
     {   
         Microphone.End(microphoneName);
-        AnalyzeSound();
-        PitchValue.text = pitchValue.ToString();
     }
 
     // Update is called once per frame
     void Update()
     {       
-        AnalyzeSound();
-        Note.text = GetNote(pitchValue).ToString();
-        //StartCoroutine(Wait());
-        
+        AnalyzeSound();        
     }
-
-    // private IEnumerator Wait()
-    // {
-    //     yield return new WaitForSeconds(5.0f);
-    // }
 
     public string GetNote(float freq)
     {
@@ -94,7 +85,7 @@ public class Tuner : MonoBehaviour
             }
         }
 
-        return "---";
+        return Note.text; //"---";
     }
 
     public void AnalyzeSound()
@@ -104,7 +95,7 @@ public class Tuner : MonoBehaviour
         
         float maxV = 0;
         var maxN = 0;
-        float Threshold = 0.0f;
+        float Threshold = 0.01f;
         for (var i = 0; i < SAMPLE_SIZE; i++)
         { // find max 
             if (!(spectrum[i] > maxV) || !(spectrum[i] > Threshold))         
@@ -120,7 +111,9 @@ public class Tuner : MonoBehaviour
             var dR = spectrum[maxN + 1] / spectrum[maxN];
             freqN += 0.5f * (dR * dR - dL * dL);
         }
-        pitchValue = freqN * (sampleRate / 2) / SAMPLE_SIZE; // convert index to frequency
+        if (freqN>0)
+            pitchValue = freqN * (sampleRate / 2) / SAMPLE_SIZE; // convert index to frequency
+            Note.text = GetNote(pitchValue).ToString();
         PitchValue.text = pitchValue.ToString();
     }
 }
