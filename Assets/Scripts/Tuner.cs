@@ -8,9 +8,12 @@ using UnityEngine.UI;
 public class Tuner : MonoBehaviour
 {
     private const int SAMPLE_SIZE = 1024;
-    public float pitchValue;
+    private float pitchValue;
     public Text PitchValue;
     public Text Note;
+    public Text DifferenceFreq;
+    public Text Result;
+    private float differenceFreq;
     public AudioSource source;
     private float[] spectrum;
     private int sampleRate;
@@ -41,16 +44,12 @@ public class Tuner : MonoBehaviour
         source = GetComponent<AudioSource>();
 
         string microphoneName =  Microphone.devices[0];
-        source.outputAudioMixerGroup = MicrophoneGroup;
-        // source.clip = Microphone.Start(microphoneName, true, 20, sampleRate);
-        // source.Play();
-        
-        spectrum = new float[SAMPLE_SIZE];        
+        source.outputAudioMixerGroup = MicrophoneGroup;        
     }
 
     public void OnRecords()
     {   
-        Microphone.End(microphoneName);
+        if (Microphone.IsRecording(microphoneName))Microphone.End(microphoneName);
         source.clip = Microphone.Start(microphoneName, true, 20, sampleRate);
         source.Play();      
     }
@@ -58,6 +57,7 @@ public class Tuner : MonoBehaviour
     public void OffRecords()
     {   
         Microphone.End(microphoneName);
+        Start();
     }
 
     // Update is called once per frame
@@ -78,6 +78,16 @@ public class Tuner : MonoBehaviour
             {
                 if ((freq >= baseFreq - 0.5) && (freq < baseFreq + 0.485) || (freq == baseFreq))
                 {
+                    if (freq==0f)
+                        Result.text = "---";
+                    differenceFreq=baseFreq-freq;                    
+                    if (differenceFreq>0.01)
+                        Result.text = "Натянуть";
+                    else if (differenceFreq<-0.01)
+                        Result.text = "Ослабить";
+                    else
+                        Result.text = "Настроена";
+                    
                     return note.Key + i;
                 }
 
@@ -85,11 +95,12 @@ public class Tuner : MonoBehaviour
             }
         }
 
-        return Note.text; //"---";
+        return Note.text;
     }
 
     public void AnalyzeSound()
     {
+        spectrum = new float[SAMPLE_SIZE];
         //Find Pitch
         source.GetSpectrumData(spectrum, 0, FFTWindow.BlackmanHarris);
         
@@ -111,9 +122,10 @@ public class Tuner : MonoBehaviour
             var dR = spectrum[maxN + 1] / spectrum[maxN];
             freqN += 0.5f * (dR * dR - dL * dL);
         }
-        if (freqN>0)
+        if (freqN>0f)
             pitchValue = freqN * (sampleRate / 2) / SAMPLE_SIZE; // convert index to frequency
             Note.text = GetNote(pitchValue).ToString();
+            DifferenceFreq.text = differenceFreq.ToString();
         PitchValue.text = pitchValue.ToString();
     }
 }
