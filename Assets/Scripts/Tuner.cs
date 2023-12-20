@@ -13,6 +13,7 @@ public class Tuner : MonoBehaviour
     public Text Note;
     public Text DifferenceFreq;
     public Text Result;
+    private int Struna;
     private float differenceFreq;
     public AudioSource source;
     private float[] spectrum;
@@ -36,6 +37,42 @@ public class Tuner : MonoBehaviour
         { "B", 30.87f },
     };
 
+    private Dictionary<int, float> StrunaFreq = new Dictionary<int, float>()
+    {
+        { 1, 329.63f},  //E
+        { 2, 246.94f},  //B
+        { 3, 196.00f},	//G
+        { 4, 146.83f},  //D
+        { 5, 110.00f},  //A
+        { 6,  82.41f}   //E
+    };
+
+    public void ButtonGetStrune(int struna)
+    {
+        Struna=struna;
+    }
+
+    public float FindDifferenceFreq()
+    {
+        Debug.Log(Struna);
+        if (Struna==0)
+        {
+            Result.text = "Выберите струну";
+            return 0;
+        }
+        var struneFreq = StrunaFreq[Struna];
+        differenceFreq = pitchValue-struneFreq;
+                           
+        if (differenceFreq>1)
+            Result.text = "Натянуть";
+        else if (differenceFreq<-1)
+            Result.text = "Ослабить";
+        else
+            Result.text = "Настроена";
+
+        return differenceFreq;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -49,7 +86,7 @@ public class Tuner : MonoBehaviour
 
     public void OnRecords()
     {   
-        if (Microphone.IsRecording(microphoneName))Microphone.End(microphoneName);
+        if (Microphone.IsRecording(microphoneName)) Microphone.End(microphoneName);
         source.clip = Microphone.Start(microphoneName, true, 20, sampleRate);
         source.Play();      
     }
@@ -57,13 +94,15 @@ public class Tuner : MonoBehaviour
     public void OffRecords()
     {   
         Microphone.End(microphoneName);
-        Start();
+        //Start();
     }
 
     // Update is called once per frame
     void Update()
     {       
-        AnalyzeSound();        
+        if (Microphone.IsRecording(microphoneName))
+            AnalyzeSound();       
+        //Debug.Log(Struna); 
     }
 
     public string GetNote(float freq)
@@ -77,17 +116,7 @@ public class Tuner : MonoBehaviour
             for (int i = 0; i < 9; i++)
             {
                 if ((freq >= baseFreq - 0.5) && (freq < baseFreq + 0.485) || (freq == baseFreq))
-                {
-                    if (freq==0f)
-                        Result.text = "---";
-                    differenceFreq=baseFreq-freq;                    
-                    if (differenceFreq>0.01)
-                        Result.text = "Натянуть";
-                    else if (differenceFreq<-0.01)
-                        Result.text = "Ослабить";
-                    else
-                        Result.text = "Настроена";
-                    
+                {                  
                     return note.Key + i;
                 }
 
@@ -125,7 +154,7 @@ public class Tuner : MonoBehaviour
         if (freqN>0f)
             pitchValue = freqN * (sampleRate / 2) / SAMPLE_SIZE; // convert index to frequency
             Note.text = GetNote(pitchValue).ToString();
-            DifferenceFreq.text = differenceFreq.ToString();
+            DifferenceFreq.text = FindDifferenceFreq().ToString();
         PitchValue.text = pitchValue.ToString();
     }
 }
