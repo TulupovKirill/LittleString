@@ -11,4 +11,19 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Guitar.unity
     guid: 1f28a599e0848f04e9263d5be6a5fa8a
+  - enabled: 1
+    path: Assets/Scenes/Tuner.unity
+    guid: c8cba3f642a8b7f43bfe61a7a164429e
+  - enabled: 1
+    path: Assets/Scenes/RightPosition.unity
+    guid: b74c70e8310396d43b19de0afc4fb44a
+  - enabled: 1
+    path: Assets/Scenes/LeghtPosition.unity
+    guid: 5338ff85033f3d948a8d25b6845408fc
+  - enabled: 1
+    path: Assets/Scenes/Tabs.unity
+    guid: 084d08f4408dfc647b9e926f2436bfeb
+  - enabled: 1
+    path: Assets/Scenes/Song.unity
+    guid: ff206b245cfee1e4ca4181ddd2d4ce57
   m_configObjects: {}
