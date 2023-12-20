@@ -18,7 +18,7 @@ EditorBuildSettings:
     path: Assets/Scenes/RightPosition.unity
     guid: b74c70e8310396d43b19de0afc4fb44a
   - enabled: 1
-    path: Assets/Scenes/LeghtPosition.unity
+    path: Assets/Scenes/LeftPosition.unity
     guid: 5338ff85033f3d948a8d25b6845408fc
   - enabled: 1
     path: Assets/Scenes/Tabs.unity
