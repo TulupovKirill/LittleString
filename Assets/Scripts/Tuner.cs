@@ -94,7 +94,11 @@ public class Tuner : MonoBehaviour
     public void OffRecords()
     {   
         Microphone.End(microphoneName);
-        //Start();
+        
+        PitchValue.text = "Запись остановлена";
+        Note.text = "Запись остановлена";
+        DifferenceFreq.text = "Запись остановлена";
+        Result.text = "Запись остановлена";
     }
 
     // Update is called once per frame
